@@ -90,3 +90,19 @@ async function setupPodman() {
 }
 
 module.exports = {setupPodman};
+
+
+/* 
+I will need to setup a podman machine and podman compose
+
+MacOS:
+podman machine init
+podman machine start
+
+// install podman-compose
+brew install podman-compose
+
+Using this I can run docker compose files with podman
+
+Podman deletion: https://github.com/containers/podman/issues/11319
+*/
