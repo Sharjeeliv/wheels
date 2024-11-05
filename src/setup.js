@@ -81,7 +81,8 @@ async function setupPodman() {
         console.log('Podman installed:', result);
     // Windows Setup
     } else if (os.platform() === 'win32') {
-        return await installPodmanWin();
+        console.log("Windows")
+        // return await installPodmanWin();
     // Unsupported Platform
     } else {
         console.error('Unsupported platform:', os.platform());
