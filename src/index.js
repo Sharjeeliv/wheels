@@ -1,15 +1,21 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require('node:path');
-const { setupPodman } = require('./setup'); // Import the installPodman function from setup.js
+const os = require('os');
+const exec = require('child_process').exec;
+
+// Import Local Functions
+const { setupPodman } = require('./setup');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow;
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -17,11 +23,19 @@ const createWindow = () => {
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+    // and load the index.html of the app.
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+
+  const platform = os.platform();
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('platform', platform);
+    checkDependencies(platform);
+  });
+
+
 
   return mainWindow;
 };
@@ -50,6 +64,30 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+// Function to check if dependencies are installed
+function checkDependencies(platform) {
+  const dependencies = platform === 'darwin' 
+    ? ['brew', 'podman', 'podman-compose'] // List of macOS dependencies
+    : ['dep1', 'dep2', 'dep3', 'dep4', 'dep5', 'dep6']; // List of Windows dependencies
+
+  const statuses = {};
+  
+  dependencies.forEach((dep, index) => {
+    exec(`command -v ${dep}`, (error) => {
+      try {
+        statuses[dep] = !error; // If no error, dependency is installed
+        if (Object.keys(statuses).length === dependencies.length) {
+          mainWindow.webContents.send('dependency-status', statuses);
+        }
+      } 
+
+      catch (error) {
+        console.error(`Failed to check dependency ${dep}:`, error);
+      }
+    });
+  });
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

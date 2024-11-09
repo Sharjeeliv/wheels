@@ -1,4 +1,8 @@
 // Module for setting up Podman on MacOS and Windows
+// Fundamentally, the app is a wrapper around Podman so certain types of programs
+// can easily be shared to other users, especially non-technical users. Podman
+// will run in the background and the app will provide a GUI for managing it and
+// interfacing with the app -which currently requires the app has a web server
 
 // ********************
 // CONSTANTS & MODULES
@@ -57,6 +61,26 @@ async function installPodmanMac() {
     }
 }
 
+async function installComposeMac(){
+
+    // Check if Compose is installed
+    const compose = await isComposeInstalled();
+    if (compose) {
+        console.log('Podman Compose is already installed');
+        return true;
+    }
+    
+    const command = 'brew install podman-compose';
+    try {
+        await exec(command);
+        console.log('Podman Compose installed successfully');
+        return true;
+    } catch (error) {
+        console.error('Failed to install Podman Compose:', error);
+        return false;
+    }
+}
+
 // ********************
 // WINDOWS FUNCTIONS
 // ********************
@@ -70,6 +94,12 @@ async function isPodmanInstalled() {
     return !error;
 }
 
+async function isComposeInstalled() {
+    const { error, stdout, stderr } = await exec('podman-compose --version')
+    return !error;
+}
+
+
 // ********************
 // ENTRY FUNCTION
 // ********************
@@ -77,12 +107,18 @@ async function setupPodman() {
     // MacOS Setup
     if (os.platform() === 'darwin') {
         await installPodmanMac();
+        await installComposeMac();
         const result = await isPodmanInstalled();
         console.log('Podman installed:', result);
     // Windows Setup
     } else if (os.platform() === 'win32') {
-        console.log("Windows")
-        // return await installPodmanWin();
+
+        // Install wsl 2 if not installed
+        // use wsl 2 for rest of the setup
+        // Install podman
+        // insta;; python and pip
+        // Install podman-compose
+        return await installPodmanWin();
     // Unsupported Platform
     } else {
         console.error('Unsupported platform:', os.platform());

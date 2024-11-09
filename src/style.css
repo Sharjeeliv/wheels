@@ -1,0 +1,55 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+}
+/* Container styles */
+#checkboxContainer div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#checkboxContainer span {
+  margin-left: 8px;
+}
+
+/* Hide the native checkbox appearance */
+#checkboxContainer input[type="checkbox"] {
+  display: none;
+}
+
+/* Custom round checkbox styling */
+#checkboxContainer input[type="checkbox"] + span::before {
+  content: '';
+  text-align: center;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgb(59, 59, 59);
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: rgb(211, 103, 103);
+  transition: background-color 0.3s, border-color 0.3s;
+  position: relative;
+}
+
+/* Checked state styling */
+#checkboxContainer input[type="checkbox"]:checked + span::before {
+  content: '✓';
+  text-align: center;
+  background-color: rgb(162, 230, 145);
+  border-color: rgb(59, 59, 59);
+}
+
+/* Display checkmark when checked */
+/* #checkboxContainer input[type="checkbox"]:checked + span::after {
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */

@@ -1,7 +1,7 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+// preload.js
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  onInstallStatus: (callback) => ipcRenderer.on('install-status', callback)
+  onPlatform: (callback) => ipcRenderer.on('platform', (event, platform) => callback(platform)),
+  onDependencyStatus: (callback) => ipcRenderer.on('dependency-status', (event, statuses) => callback(statuses))
 });
